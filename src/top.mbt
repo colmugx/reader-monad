@@ -50,7 +50,7 @@ fn Reader::new[Env, A](f : (Env) -> A) -> Reader[Env, A] {
 /// ///|
 /// test "Reader::pure" {
 ///   let reader = Reader::pure("constant")
-///   inspect!(reader.run(42), content="\"constant\"")
+///   inspect!(reader.run(42), content="constant")
 /// }
 /// ```
 pub fn Reader::pure[Env, A](x : A) -> Reader[Env, A] {
@@ -185,7 +185,7 @@ pub fn Reader::local_[Env, A](
 /// ///|
 /// test "ask" {
 ///   let reader = ask()
-///   inspect!(reader.run("hello"), content="\"hello\"")
+///   inspect!(reader.run("hello"), content="hello")
 /// }
 /// ```
 pub fn ask[Env]() -> Reader[Env, Env] {

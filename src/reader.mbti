@@ -1,0 +1,23 @@
+package "colmugx/reader"
+
+// Values
+fn ask[Env]() -> Reader[Env, Env]
+
+fn asks[Env, A]((Env) -> A) -> Reader[Env, A]
+
+// Types and methods
+pub struct Reader[Env, A] {
+  // private fields
+}
+impl Reader {
+  bind[Env, A, B](Self[Env, A], (A) -> Self[Env, B]) -> Self[Env, B]
+  local_[Env, A](Self[Env, A], (Env) -> Env) -> Self[Env, A]
+  map[Env, A, B](Self[Env, A], (A) -> B) -> Self[Env, B]
+  pure[Env, A](A) -> Self[Env, A]
+  run[Env, A](Self[Env, A], Env) -> A
+}
+
+// Type aliases
+
+// Traits
+
