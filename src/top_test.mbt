@@ -18,7 +18,7 @@ test "@reader.Reader::bind/composition" {
 
 ///|
 test "@reader.Reader::ask/environment_access" {
-  let get_length = @reader.Reader::ask(fn(s : String) { s.length() })
+  let get_length = @reader.asks(fn(s : String) { s.length() })
   inspect!(@reader.Reader::run(get_length, "hello"), content="5")
   inspect!(@reader.Reader::run(get_length, ""), content="0")
 }
