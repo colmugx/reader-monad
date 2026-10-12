@@ -1,0 +1,15 @@
+name = "colmugx/reader"
+
+version = "0.4.0"
+
+readme = "README.md"
+
+repository = "https://github.com/colmugx/reader-monad"
+
+license = "Apache-2.0"
+
+keywords = [ "reader", "monad", "reader monad", "DI", "dependency injection" ]
+
+description = "An implementation of Reader Monad in Moonbit"
+
+source = "src"

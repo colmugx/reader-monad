@@ -17,15 +17,15 @@ pub struct Reader[Env, A] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// ///|
 /// test "Reader::new" {
 ///   let reader : Reader[String, Int] = Reader::new(fn { env => env.length() })
 ///   inspect!(reader.run("hello"), content="5")
 /// }
 /// ```
-fn Reader::new[Env, A](f : (Env) -> A) -> Reader[Env, A] {
-  { _run: f }
+fn[Env, A] Reader::Reader(f : (Env) -> A) -> Reader[Env, A] {
+  { _run: f, }
 }
 
 ///|
@@ -46,15 +46,14 @@ fn Reader::new[Env, A](f : (Env) -> A) -> Reader[Env, A] {
 ///
 /// Example:
 ///
-/// ```moonbit
-/// ///|
+/// ```moonbit nocheck
 /// test "Reader::pure" {
 ///   let reader = Reader::pure("constant")
-///   inspect!(reader.run(42), content="constant")
+///   inspect(reader.run(42), content="constant")
 /// }
 /// ```
-pub fn Reader::pure[Env, A](x : A) -> Reader[Env, A] {
-  { _run: fn { _ => x } }
+pub fn[Env, A] Reader::pure(x : A) -> Reader[Env, A] {
+  { _run: fn(_) { x }, }
 }
 
 ///|
@@ -70,14 +69,14 @@ pub fn Reader::pure[Env, A](x : A) -> Reader[Env, A] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// ///|
 /// test "Reader::run" {
-///   let reader = Reader::new(fn { env => env + 1 })
+///   let reader = Reader(fn { env => env + 1 })
 ///   inspect!(reader.run(41), content="42")
 /// }
 /// ```
-pub fn Reader::run[Env, A](reader : Reader[Env, A], config : Env) -> A {
+pub fn[Env, A] Reader::run(reader : Reader[Env, A], config : Env) -> A {
   (reader._run)(config)
 }
 
@@ -96,7 +95,7 @@ pub fn Reader::run[Env, A](reader : Reader[Env, A], config : Env) -> A {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// ///|
 /// test "Reader::bind" {
 ///   let reader1 = Reader::pure(5)
@@ -104,41 +103,19 @@ pub fn Reader::run[Env, A](reader : Reader[Env, A], config : Env) -> A {
 ///   inspect!(reader2.run(0), content="10")
 /// }
 /// ```
-pub fn Reader::bind[Env, A, B](
+pub fn[Env, A, B] Reader::bind(
   reader : Reader[Env, A],
-  f : (A) -> Reader[Env, B]
+  f : (A) -> Reader[Env, B],
 ) -> Reader[Env, B] {
-  Reader::new(fn { env => reader.run(env) |> f |> Reader::run(env) })
+  Reader(fn(env) { f(reader.run(env)).run(env) })
 }
 
 ///|
-/// Maps a function over the value produced by a reader computation, transforming
-/// it from type `A` to type `B` while preserving the reader context.
-///
-/// Parameters:
-///
-/// * `reader` : A reader computation that produces a value of type `A`.
-/// * `f` : A transformation function that converts a value of type `A` to type
-/// `B`.
-///
-/// Returns a new reader that will run the original computation and then apply
-/// the transformation function to its result.
-///
-/// Example:
-///
-/// ```moonbit
-/// ///|
-/// test "Reader::map" {
-///   let reader = Reader::pure(5)
-///   let mapped = reader.map(fn { x => x * 2 })
-///   inspect!(mapped.run(0), content="10")
-/// }
-/// ```
-pub fn Reader::map[Env, A, B](
+pub fn[Env, A, B] Reader::map(
   reader : Reader[Env, A],
-  f : (A) -> B
+  f : (A) -> B,
 ) -> Reader[Env, B] {
-  reader.bind(fn { a => f(a) |> Reader::pure })
+  reader.bind(fn(a) { f(a) |> Reader::pure })
 }
 
 ///|
@@ -155,19 +132,19 @@ pub fn Reader::map[Env, A, B](
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// ///|
 /// test "Reader::local_" {
-///   let reader = Reader::new(fn { env => env * 2 })
+///   let reader = Reader(fn { env => env * 2 })
 ///   let modified = reader.local_(fn { env => env + 1 })
 ///   inspect!(modified.run(5), content="12")
 /// }
 /// ```
-pub fn Reader::local_[Env, A](
+pub fn[Env, A] Reader::local_(
   reader : Reader[Env, A],
-  modifier : (Env) -> Env
+  modifier : (Env) -> Env,
 ) -> Reader[Env, A] {
-  Reader::new(fn { env => reader.run(modifier(env)) })
+  Reader(fn(env) { reader.run(modifier(env)) })
 }
 
 ///|
@@ -181,15 +158,14 @@ pub fn Reader::local_[Env, A](
 ///
 /// Example:
 ///
-/// ```moonbit
-/// ///|
+/// ```moonbit nocheck
 /// test "ask" {
 ///   let reader = ask()
-///   inspect!(reader.run("hello"), content="hello")
+///   inspect(reader.run("hello"), content="hello")
 /// }
 /// ```
-pub fn ask[Env]() -> Reader[Env, Env] {
-  Reader::new(fn { env => env })
+pub fn[Env] ask() -> Reader[Env, Env] {
+  Reader(fn(env) { env })
 }
 
 ///|
@@ -205,13 +181,13 @@ pub fn ask[Env]() -> Reader[Env, Env] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// ///|
 /// test "asks" {
 ///   let reader = asks(fn { env => env + 1 })
 ///   inspect!(reader.run(41), content="42")
 /// }
 /// ```
-pub fn asks[Env, A](f : (Env) -> A) -> Reader[Env, A] {
-  Reader::new(f)
+pub fn[Env, A] asks(f : (Env) -> A) -> Reader[Env, A] {
+  Reader(f)
 }

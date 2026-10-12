@@ -1,0 +1,23 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "colmugx/reader"
+
+// Values
+pub fn[Env] ask() -> Reader[Env, Env]
+
+pub fn[Env, A] asks((Env) -> A) -> Reader[Env, A]
+
+// Errors
+
+// Types and methods
+pub struct Reader[Env, A] {
+  // private fields
+}
+pub fn[Env, A, B] Reader::bind(Self[Env, A], (A) -> Self[Env, B]) -> Self[Env, B]
+pub fn[Env, A] Reader::local_(Self[Env, A], (Env) -> Env) -> Self[Env, A]
+pub fn[Env, A, B] Reader::map(Self[Env, A], (A) -> B) -> Self[Env, B]
+pub fn[Env, A] Reader::pure(A) -> Self[Env, A]
+pub fn[Env, A] Reader::run(Self[Env, A], Env) -> A
+
+// Type aliases
+
+// Traits
